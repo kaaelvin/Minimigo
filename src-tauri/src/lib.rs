@@ -8,16 +8,9 @@ use std::sync::Mutex;
 use std::time::Duration;
 use tauri::{Emitter, Manager};
 
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_opener::init())
         .setup(|app| {
             let dir = app.path().app_data_dir().expect("app_data_dir");
             std::fs::create_dir_all(&dir).ok();
@@ -72,7 +65,7 @@ pub fn run() {
                 services::persist(&state, services::now_unix());
             }
         })
-        .invoke_handler(tauri::generate_handler![greet, services::get_pet_state])
+        .invoke_handler(tauri::generate_handler![services::get_pet_state])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

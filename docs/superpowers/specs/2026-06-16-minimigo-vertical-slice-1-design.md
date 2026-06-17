@@ -99,8 +99,10 @@ escuta.
 
 ## Tratamento de erros
 
-- **DB ausente/corrompido:** loga e cria pet novo em vez de travar; faz backup do
-  arquivo antigo antes de sobrescrever.
+- **DB ausente/corrompido:** loga e cai para um banco em memória, de modo que o app
+  ainda inicia (a sessão simplesmente não persiste); o arquivo corrompido é deixado
+  intacto, sem perda de dados e sem sobrescrita. O backup do arquivo antigo antes de
+  sobrescrever fica adiado para um slice futuro.
 - **Comando Tauri falha:** UI mantém o último estado conhecido / estado "carregando" em
   vez de tela branca.
 - **Sprite sheet não carrega:** PixiJS cai num placeholder (retângulo) e loga, sem
