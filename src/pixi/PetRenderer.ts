@@ -34,7 +34,10 @@ export class PetRenderer {
 
   private setAnimation(name: "idle" | "sleep") {
     if (!this.sheet || this.current === name) return;
-    if (this.sprite) this.app.stage.removeChild(this.sprite);
+    if (this.sprite) {
+      this.app.stage.removeChild(this.sprite);
+      this.sprite.destroy();
+    }
     this.sprite = new AnimatedSprite(this.sheet.animations[name]);
     this.sprite.animationSpeed = 0.1;
     this.sprite.anchor.set(0.5);
