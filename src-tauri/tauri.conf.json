@@ -12,9 +12,16 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "minimigo",
-        "width": 800,
-        "height": 600
+        "width": 220,
+        "height": 220,
+        "transparent": true,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "resizable": false,
+        "shadow": false
       }
     ],
     "security": {

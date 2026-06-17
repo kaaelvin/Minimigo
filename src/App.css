@@ -1,3 +1,9 @@
+html, body, #root {
+  background: transparent;
+  margin: 0;
+  overflow: hidden;
+}
+
 .logo.vite:hover {
   filter: drop-shadow(0 0 2em #747bff);
 }
@@ -12,7 +18,7 @@
   font-weight: 400;
 
   color: #0f0f0f;
-  background-color: #f6f6f6;
+  background-color: transparent;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -98,7 +104,7 @@ button {
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
-    background-color: #2f2f2f;
+    background-color: transparent;
   }
 
   a:hover {

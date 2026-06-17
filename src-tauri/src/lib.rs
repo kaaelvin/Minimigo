@@ -1,6 +1,7 @@
 mod domain;
 mod persistence;
 mod services;
+mod shell;
 mod simulation;
 
 use std::sync::Mutex;
@@ -41,6 +42,8 @@ pub fn run() {
                 conn: Mutex::new(conn),
                 pet: Mutex::new(pet),
             });
+
+            shell::position_near_taskbar(app.get_webview_window("main").as_ref());
 
             let handle = app.handle().clone();
             std::thread::spawn(move || {
