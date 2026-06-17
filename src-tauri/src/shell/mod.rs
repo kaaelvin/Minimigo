@@ -9,7 +9,7 @@ pub fn position_near_taskbar(window: Option<&WebviewWindow>) {
     let scale = monitor.scale_factor();
     let win = window.outer_size().unwrap_or(tauri::PhysicalSize { width: 220, height: 220 });
 
-    // margem ~48px (altura típica da taskbar) + folga
+    // ~56 px lógicos de folga vertical (≈48 da taskbar + 8 de respiro), escalados por DPI
     let margin = (56.0 * scale) as u32;
     let x = screen.width.saturating_sub(win.width).saturating_sub((8.0 * scale) as u32);
     let y = screen.height.saturating_sub(win.height).saturating_sub(margin);
