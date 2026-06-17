@@ -48,3 +48,20 @@ Decisões importantes:
 Prompt master para uma IA/agente de desenvolvimento:
 
 “Você é um agente sênior responsável por construir um app desktop chamado MiniMigo Taskbar, um pet virtual estilo Tamagochi que vive próximo à barra de tarefas do Windows. Use Tauri 2, Rust, React, Vite, TypeScript, PixiJS, SQLite e Zustand. Implemente o MVP com janela transparente, system tray, onboarding, persistência local, simulation engine, ações de cuidado, mood engine, animações e configurações básicas. Mantenha domínio separado da UI, escreva testes para decay, humor e ações, evite coleta de dados pessoais e mantenha baixo consumo de recursos.”
+
+---
+
+## Execução — Roadmap de Fatias
+
+Este SDD descreve a visão e o MVP. A **execução** acontece em **fatias verticais**
+(cada uma com ciclo spec → plano → implementação), rastreadas de forma estrutural em:
+
+**→ [`docs/ROADMAP.md`](docs/ROADMAP.md)** — mapa MVP → fatias, status, convenções
+técnicas do projeto e ponteiros para specs/planos/aceites.
+
+Estado atual (resumo; ver o roadmap para detalhes):
+
+- **Fatia 1 — Pipeline fim-a-fim:** ✅ concluída (janela transparente, pet animado
+  placeholder, fome+energia com decay online/offline, persistência SQLite).
+- **Fatia 2 — Ações de cuidado (alimentar + dormir):** 🔵 em design, pausada — ver
+  `docs/superpowers/specs/2026-06-16-minimigo-vertical-slice-2-care-actions-design.md`.
