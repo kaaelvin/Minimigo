@@ -60,13 +60,15 @@ pub fn get_pet_state(state: tauri::State<AppState>) -> PetState {
 pub fn persist(state: &AppState, now: i64) {
     let pet = state.pet.lock().unwrap();
     let conn = state.conn.lock().unwrap();
-    let _ = persistence::save_snapshot(
+    if let Err(e) = persistence::save_snapshot(
         &conn,
         &Snapshot {
             pet: pet.clone(),
             last_seen_unix: now,
         },
-    );
+    ) {
+        eprintln!("falha ao persistir snapshot do pet: {e}");
+    }
 }
 
 #[cfg(test)]

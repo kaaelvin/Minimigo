@@ -21,10 +21,20 @@ pub fn run() {
             let dir = app.path().app_data_dir().expect("app_data_dir");
             std::fs::create_dir_all(&dir).ok();
             let db_path = dir.join("minimigo.db");
-            let conn = rusqlite::Connection::open(&db_path)
-                .or_else(|_| rusqlite::Connection::open_in_memory())
-                .expect("abrir conexão SQLite");
-            persistence::init_db(&conn).expect("init_db");
+            // Tenta abrir e inicializar o banco em disco; se qualquer etapa falhar
+            // (arquivo corrompido/bloqueado), cai para um banco em memória para que o
+            // app ainda inicie (a sessão simplesmente não persiste).
+            let open_disk = || -> rusqlite::Result<rusqlite::Connection> {
+                let c = rusqlite::Connection::open(&db_path)?;
+                persistence::init_db(&c)?;
+                Ok(c)
+            };
+            let conn = open_disk().unwrap_or_else(|e| {
+                eprintln!("falha ao abrir/inicializar {db_path:?} ({e}); usando banco em memória");
+                let c = rusqlite::Connection::open_in_memory().expect("abrir SQLite em memória");
+                persistence::init_db(&c).expect("init_db em memória");
+                c
+            });
 
             let pet = services::load_or_create_pet(&conn, services::now_unix());
             app.manage(services::AppState {
