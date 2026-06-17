@@ -2,6 +2,12 @@ node_modules/
 dist/
 dist-ssr
 src-tauri/target/
+
+# Playwright
+test-results/
+playwright-report/
+.playwright/
+
 *.db
 *.db-*
 

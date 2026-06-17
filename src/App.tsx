@@ -15,12 +15,26 @@ export default function App() {
     let renderer: PetRenderer | undefined;
     let unlisten: (() => void) | undefined;
     let disposed = false;
+    // Só fica `true` depois que app.init() resolveu. Sem isso, o StrictMode do
+    // React 19 (mount -> unmount -> remount) dispara o cleanup enquanto o init
+    // ainda está em voo; chamar app.destroy() nesse instante explode dentro do
+    // ResizePlugin do Pixi com "this._cancelResize is not a function" e derruba
+    // o componente (o canvas nunca chega a ser montado).
+    let initialized = false;
     const app = new Application();
+
+    const teardown = () => {
+      unlisten?.();
+      if (initialized) {
+        app.destroy(true);
+      }
+    };
 
     (async () => {
       await app.init({ width: 220, height: 220, backgroundAlpha: 0 });
+      initialized = true;
       if (disposed) {
-        app.destroy(true);
+        teardown();
         return;
       }
       containerRef.current?.appendChild(app.canvas);
@@ -45,6 +59,7 @@ export default function App() {
       // vazar um listener órfão chamando um renderer destruído.
       if (disposed) {
         fn();
+        teardown();
         return;
       }
       unlisten = fn;
@@ -52,8 +67,7 @@ export default function App() {
 
     return () => {
       disposed = true;
-      unlisten?.();
-      app.destroy(true);
+      teardown();
     };
   }, [setPet]);
 
