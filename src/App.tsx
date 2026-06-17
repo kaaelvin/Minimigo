@@ -37,10 +37,17 @@ export default function App() {
       }
 
       // updates periódicos do tick loop do Rust
-      unlisten = await listen<PetState>("pet-updated", (e) => {
+      const fn = await listen<PetState>("pet-updated", (e) => {
         setPet(e.payload);
         renderer?.render(e.payload);
       });
+      // Se o componente desmontou enquanto o listen resolvia, desfaz já para não
+      // vazar um listener órfão chamando um renderer destruído.
+      if (disposed) {
+        fn();
+        return;
+      }
+      unlisten = fn;
     })();
 
     return () => {
