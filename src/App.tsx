@@ -1,51 +1,54 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
+import { useEffect, useRef } from "react";
+import { Application } from "pixi.js";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
+import { usePetStore } from "./state/petStore";
+import { PetRenderer } from "./pixi/PetRenderer";
+import type { PetState } from "./types";
 import "./App.css";
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+export default function App() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const setPet = usePetStore((s) => s.setPet);
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  useEffect(() => {
+    let renderer: PetRenderer | undefined;
+    let unlisten: (() => void) | undefined;
+    let disposed = false;
+    const app = new Application();
 
-  return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
+    (async () => {
+      await app.init({ width: 220, height: 220, backgroundAlpha: 0 });
+      if (disposed) {
+        app.destroy(true);
+        return;
+      }
+      containerRef.current?.appendChild(app.canvas);
+      renderer = new PetRenderer(app);
+      await renderer.load();
 
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
+      // estado inicial vindo do Rust
+      try {
+        const initial = await invoke<PetState>("get_pet_state");
+        setPet(initial);
+        renderer.render(initial);
+      } catch (e) {
+        console.error("falha no get_pet_state", e);
+      }
 
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
-  );
+      // updates periódicos do tick loop do Rust
+      unlisten = await listen<PetState>("pet-updated", (e) => {
+        setPet(e.payload);
+        renderer?.render(e.payload);
+      });
+    })();
+
+    return () => {
+      disposed = true;
+      unlisten?.();
+      app.destroy(true);
+    };
+  }, [setPet]);
+
+  return <div ref={containerRef} />;
 }
-
-export default App;
