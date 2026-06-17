@@ -1,4 +1,5 @@
 mod domain;
+mod persistence;
 mod simulation;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
