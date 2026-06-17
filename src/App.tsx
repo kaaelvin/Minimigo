@@ -21,11 +21,17 @@ export default function App() {
     // ResizePlugin do Pixi com "this._cancelResize is not a function" e derruba
     // o componente (o canvas nunca chega a ser montado).
     let initialized = false;
+    // Pixi 8 não é idempotente: app.destroy() zera app.stage, e uma segunda chamada
+    // estoura com "Cannot read properties of null". Como teardown() pode ser chamado
+    // mais de uma vez (cleanup do React + caminho disposed da IIFE), guardamos aqui.
+    let destroyed = false;
     const app = new Application();
 
     const teardown = () => {
       unlisten?.();
-      if (initialized) {
+      unlisten = undefined;
+      if (initialized && !destroyed) {
+        destroyed = true;
         app.destroy(true);
       }
     };
