@@ -33,7 +33,7 @@ export class PetRenderer {
       this.sheet = await Assets.load(ATLAS_URL);
       this.setAnimation("idle");
     } catch (err) {
-      console.error("falha ao carregar sprite sheet, usando placeholder", err);
+      console.error("falha ao carregar sprite sheet, usando quadrado branco", err);
       const fallback = new Sprite(Texture.WHITE);
       fallback.width = 64;
       fallback.height = 64;

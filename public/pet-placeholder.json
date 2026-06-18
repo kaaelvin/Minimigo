@@ -1,9 +1,0 @@
-{
-  "frames": {
-    "idle_0": { "frame": { "x": 0, "y": 0, "w": 64, "h": 64 } },
-    "idle_1": { "frame": { "x": 64, "y": 0, "w": 64, "h": 64 } },
-    "sleep_0": { "frame": { "x": 0, "y": 64, "w": 64, "h": 64 } }
-  },
-  "meta": { "image": "pet-placeholder.png", "size": { "w": 128, "h": 128 }, "scale": "1" },
-  "animations": { "idle": ["idle_0", "idle_1"], "sleep": ["sleep_0"] }
-}
