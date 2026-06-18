@@ -43,7 +43,7 @@ Os 10 entregáveis do MVP (ver `Minimigo SDD.md`) distribuídos em fatias:
 | 6 | Simulação online/offline com teto de punição | ✅ Fatia 1 |
 | 7 | Persistência SQLite | ✅ Fatia 1 |
 | 4 | Atributos básicos | 🟡 Fatia 1 (fome, energia) → resto em fatia futura |
-| 2 | Pet animado (8 animações) | 🟡 Fatia 1 (placeholder, 2 anims) → arte real depois |
+| 2 | Pet animado (8 animações) | 🟡 aqua real (idle/sleep/eat) via pipeline de atlas → demais pets/anims depois |
 | 5 | Ações (alimentar, brincar, limpar, carinho, dormir, medicar) | 🟡 Fatia 2 (alimentar, dormir) ✅ → resto depois |
 | 3 | System tray + ações rápidas | ⬜ futura |
 | 8 | Onboarding (nome/escolha do pet) | ⬜ futura |
@@ -84,4 +84,5 @@ Legenda: ✅ concluído · 🟡 parcial · 🔵 em design · ⬜ não iniciado
 4. **Onboarding** — primeira execução: nomear/escolher o pet.
 5. **Evolução** — estágios ovo → bebê → jovem → adulto.
 6. **Configurações** — escala, posição, FPS, modo discreto.
-7. **Arte real** — substituir sprite sheet placeholder pelas 8 animações finais.
+7. **Arte real (demais pets + animações)** — pipeline de atlas pronto (`pnpm assets:pets`);
+   falta gerar os outros 11 pets e mapear os estados restantes (triste/bravo/chorando/andando).
