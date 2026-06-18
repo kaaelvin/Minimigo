@@ -40,6 +40,7 @@ export function alphaBoundingBox(data, sheetWidth, cell, threshold = 8) {
 
 /** Célula uniforme = maior largura/altura entre as bboxes + margem dos dois lados. */
 export function uniformCell(bboxes, margin) {
+  if (bboxes.length === 0) throw new RangeError("uniformCell: bboxes vazio");
   const maxW = Math.max(...bboxes.map((b) => b.w));
   const maxH = Math.max(...bboxes.map((b) => b.h));
   return { w: maxW + 2 * margin, h: maxH + 2 * margin };

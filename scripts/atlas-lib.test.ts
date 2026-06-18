@@ -20,6 +20,15 @@ describe("cellRects", () => {
     }
     expect(row0[3].x + row0[3].w).toBe(10);
   });
+
+  it("cobre colunas não-divisíveis sem buracos (alturas somam H)", () => {
+    const rects = cellRects(10, 10, 4, 4);
+    const col0 = rects.filter((_, i) => i % 4 === 0); // primeira célula de cada linha
+    for (let i = 1; i < 4; i++) {
+      expect(col0[i].y).toBe(col0[i - 1].y + col0[i - 1].h);
+    }
+    expect(col0[3].y + col0[3].h).toBe(10);
+  });
 });
 
 describe("alphaBoundingBox", () => {
