@@ -3,7 +3,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { cellRects, alphaBoundingBox, uniformCell } from "./atlas-lib.mjs";
 
-const ROOT = process.cwd();
+const ROOT = process.cwd(); // deve ser a raiz do projeto (garantido pelo script npm)
 const MARGIN = 4;
 const ALPHA_THRESHOLD = 8;
 
@@ -26,6 +26,7 @@ async function buildPet(pet, cfg) {
   const frameBoxes = [];
   for (const anim of anims) {
     const row = cfg.use[anim];
+    if (row >= cfg.rows) throw new Error(`row ${row} fora do grid (${cfg.rows} linhas): ${pet}.${anim}`);
     for (let col = 0; col < cfg.cols; col++) {
       const cell = rects[row * cfg.cols + col];
       const bbox = alphaBoundingBox(data, width, cell, ALPHA_THRESHOLD);
