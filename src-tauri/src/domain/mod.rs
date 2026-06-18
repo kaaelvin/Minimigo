@@ -26,6 +26,8 @@ pub struct Pet {
 
 pub const HUNGER_RATE_PER_MIN: f64 = 0.5;
 pub const ENERGY_RATE_PER_MIN: f64 = 0.3;
+pub const FEED_AMOUNT: f64 = 30.0;
+pub const FEED_MIN_HUNGER: f64 = 10.0;
 
 impl Attributes {
     pub fn apply_decay(&mut self, elapsed_minutes: f64) {
@@ -49,6 +51,17 @@ impl Pet {
             PetMode::Awake => PetMode::Asleep,
             PetMode::Asleep => PetMode::Awake,
         };
+    }
+
+    /// Alimenta o pet se ele estiver com fome suficiente (saciedade impede spam).
+    /// Retorna `true` se alimentou, `false` se estava saciado demais.
+    pub fn feed(&mut self) -> bool {
+        if self.attributes.hunger >= FEED_MIN_HUNGER {
+            self.attributes.hunger = (self.attributes.hunger - FEED_AMOUNT).clamp(0.0, 100.0);
+            true
+        } else {
+            false
+        }
     }
 }
 
@@ -84,5 +97,29 @@ mod tests {
         assert_eq!(p.mode, PetMode::Asleep);
         p.toggle_sleep();
         assert_eq!(p.mode, PetMode::Awake);
+    }
+
+    #[test]
+    fn feed_reduces_hunger_when_hungry() {
+        let mut p = Pet::new("Migo");
+        p.attributes.hunger = 50.0;
+        assert!(p.feed());
+        assert_eq!(p.attributes.hunger, 20.0); // 50 - 30
+    }
+
+    #[test]
+    fn feed_clamps_at_zero() {
+        let mut p = Pet::new("Migo");
+        p.attributes.hunger = 20.0;
+        assert!(p.feed());
+        assert_eq!(p.attributes.hunger, 0.0); // 20 - 30 -> clamp 0
+    }
+
+    #[test]
+    fn feed_noop_when_sated() {
+        let mut p = Pet::new("Migo");
+        p.attributes.hunger = 5.0; // < FEED_MIN_HUNGER
+        assert!(!p.feed());
+        assert_eq!(p.attributes.hunger, 5.0);
     }
 }
