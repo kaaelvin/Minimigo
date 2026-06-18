@@ -63,14 +63,12 @@ Legenda: ✅ concluído · 🟡 parcial · 🔵 em design · ⬜ não iniciado
   simulação online (tick 5s) + offline (teto 8h); persistência SQLite; comando
   `get_pet_state` + evento `pet-updated`. Testes: 9 Rust + 6 Vitest + 1 Playwright.
 
-### Fatia 2 — Ações de cuidado 🔵 EM DESIGN (pausada)
-- **Spec parcial:** `docs/superpowers/specs/2026-06-16-minimigo-vertical-slice-2-care-actions-design.md`
+### Fatia 2 — Ações de cuidado 🟢 DESIGN CONCLUÍDO
+- **Spec:** `docs/superpowers/specs/2026-06-16-minimigo-vertical-slice-2-care-actions-design.md`
 - **Objetivo:** tornar o app interativo — alimentar e dormir, fechando o loop central
   (pet sente fome/cansaço → usuário age).
-- **Status:** brainstorming pausado após a Seção 1 (domínio/simulação) ser aprovada.
-  Falta desenhar Seção 2 (comandos Tauri + fluxo) e Seção 3 (UI da barra no hover +
-  animações + testes), revisar o spec e escrever o plano. Ver o spec parcial para
-  decisões já tomadas e como retomar.
+- **Status:** todas as seções aprovadas (domínio/simulação, comandos Tauri, UI/hover +
+  animações + testes). Próximo passo: `superpowers:writing-plans` → implementação.
 
 ### Fatias futuras (ordem sugerida, a confirmar)
 1. **System tray + ações rápidas** — lar natural para ações (alimentar, mostrar/esconder, sair).
