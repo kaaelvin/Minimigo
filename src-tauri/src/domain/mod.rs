@@ -24,8 +24,10 @@ pub struct Pet {
     pub mode: PetMode,
 }
 
+// Rates acordado (decay).
 pub const HUNGER_RATE_PER_MIN: f64 = 0.5;
 pub const ENERGY_RATE_PER_MIN: f64 = 0.3;
+// Rates dormindo (energia recupera, fome desacelera).
 pub const HUNGER_RATE_ASLEEP_PER_MIN: f64 = 0.2;
 pub const ENERGY_RECOVER_ASLEEP_PER_MIN: f64 = 1.0;
 pub const FEED_AMOUNT: f64 = 30.0;
@@ -95,6 +97,14 @@ mod tests {
         p.apply_decay(1000.0);
         assert_eq!(p.attributes.hunger, 100.0);
         assert_eq!(p.attributes.energy, 0.0);
+    }
+
+    #[test]
+    fn asleep_decay_clamps() {
+        let mut p = Pet { name: "Migo".into(), attributes: Attributes { hunger: 99.0, energy: 99.0 }, mode: PetMode::Asleep };
+        p.apply_decay(1000.0);
+        assert_eq!(p.attributes.hunger, 100.0);
+        assert_eq!(p.attributes.energy, 100.0);
     }
 
     #[test]
