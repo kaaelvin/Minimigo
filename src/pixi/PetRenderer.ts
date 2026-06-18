@@ -7,6 +7,13 @@ export function pickAnimation(pet: PetState): "idle" | "sleep" {
   return pet.asleep ? "sleep" : "idle";
 }
 
+export type AnimName = "idle" | "sleep" | "eat";
+
+/** Função pura: escolhe a animação considerando a transitória de comer. */
+export function chooseAnimation(pet: PetState, eating: boolean): AnimName {
+  return eating ? "eat" : pickAnimation(pet);
+}
+
 export class PetRenderer {
   private app: Application;
   private sprite?: AnimatedSprite;
