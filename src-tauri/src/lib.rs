@@ -65,7 +65,11 @@ pub fn run() {
                 services::persist(&state, services::now_unix());
             }
         })
-        .invoke_handler(tauri::generate_handler![services::get_pet_state])
+        .invoke_handler(tauri::generate_handler![
+            services::get_pet_state,
+            services::feed_pet,
+            services::toggle_sleep
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

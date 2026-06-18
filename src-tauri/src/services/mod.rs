@@ -5,6 +5,7 @@ use rusqlite::Connection;
 use serde::Serialize;
 use std::sync::Mutex;
 use std::time::{SystemTime, UNIX_EPOCH};
+use tauri::Emitter;
 
 /// Estado compartilhado gerenciado pelo Tauri.
 pub struct AppState {
@@ -38,6 +39,7 @@ pub struct PetState {
     pub name: String,
     pub hunger: f64,
     pub energy: f64,
+    pub asleep: bool,
 }
 
 impl From<&Pet> for PetState {
@@ -46,6 +48,7 @@ impl From<&Pet> for PetState {
             name: p.name.clone(),
             hunger: p.attributes.hunger,
             energy: p.attributes.energy,
+            asleep: p.mode == crate::domain::PetMode::Asleep,
         }
     }
 }
@@ -54,6 +57,28 @@ impl From<&Pet> for PetState {
 pub fn get_pet_state(state: tauri::State<AppState>) -> PetState {
     let pet = state.pet.lock().unwrap();
     PetState::from(&*pet)
+}
+
+#[tauri::command]
+pub fn feed_pet(app: tauri::AppHandle, state: tauri::State<AppState>) {
+    {
+        let mut pet = state.pet.lock().unwrap();
+        pet.feed();
+    }
+    persist(&state, now_unix());
+    let snapshot = PetState::from(&*state.pet.lock().unwrap());
+    let _ = app.emit("pet-updated", snapshot);
+}
+
+#[tauri::command]
+pub fn toggle_sleep(app: tauri::AppHandle, state: tauri::State<AppState>) {
+    {
+        let mut pet = state.pet.lock().unwrap();
+        pet.toggle_sleep();
+    }
+    persist(&state, now_unix());
+    let snapshot = PetState::from(&*state.pet.lock().unwrap());
+    let _ = app.emit("pet-updated", snapshot);
 }
 
 /// Persiste o pet atual com o timestamp informado.
@@ -85,6 +110,14 @@ mod tests {
         let pet = load_or_create_pet(&conn, 1_700_000_000);
         assert_eq!(pet.name, "Migo");
         assert_eq!(pet.attributes.energy, 100.0);
+    }
+
+    #[test]
+    fn pet_state_reflects_asleep() {
+        let mut p = Pet::new("Migo");
+        assert!(!PetState::from(&p).asleep);
+        p.toggle_sleep();
+        assert!(PetState::from(&p).asleep);
     }
 
     #[test]
