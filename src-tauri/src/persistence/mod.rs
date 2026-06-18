@@ -55,7 +55,7 @@ mod tests {
         let conn = Connection::open_in_memory().unwrap();
         init_db(&conn).unwrap();
 
-        let pet = Pet { name: "Migo".into(), attributes: Attributes { hunger: 42.0, energy: 7.0 } };
+        let pet = Pet { name: "Migo".into(), attributes: Attributes { hunger: 42.0, energy: 7.0 }, mode: crate::domain::PetMode::Awake };
         let snap = Snapshot { pet: pet.clone(), last_seen_unix: 1_700_000_000 };
         save_snapshot(&conn, &snap).unwrap();
 

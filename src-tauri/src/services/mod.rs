@@ -94,6 +94,7 @@ mod tests {
         let pet = Pet {
             name: "Migo".into(),
             attributes: Attributes { hunger: 0.0, energy: 100.0 },
+            mode: crate::domain::PetMode::Awake,
         };
         save_snapshot(&conn, &Snapshot { pet, last_seen_unix: 1_700_000_000 }).unwrap();
 

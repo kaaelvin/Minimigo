@@ -1,5 +1,13 @@
 use serde::{Deserialize, Serialize};
 
+/// Modo do pet: acordado (decay normal) ou dormindo (recupera energia).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub enum PetMode {
+    #[default]
+    Awake,
+    Asleep,
+}
+
 /// hunger: 0.0 = saciado, 100.0 = faminto.
 /// energy: 0.0 = exausto, 100.0 = descansado.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -12,6 +20,8 @@ pub struct Attributes {
 pub struct Pet {
     pub name: String,
     pub attributes: Attributes,
+    #[serde(default)]
+    pub mode: PetMode,
 }
 
 pub const HUNGER_RATE_PER_MIN: f64 = 0.5;
@@ -29,7 +39,15 @@ impl Pet {
         Pet {
             name: name.into(),
             attributes: Attributes { hunger: 0.0, energy: 100.0 },
+            mode: PetMode::Awake,
         }
+    }
+
+    pub fn toggle_sleep(&mut self) {
+        self.mode = match self.mode {
+            PetMode::Awake => PetMode::Asleep,
+            PetMode::Asleep => PetMode::Awake,
+        };
     }
 }
 
@@ -51,5 +69,19 @@ mod tests {
         a.apply_decay(1000.0);
         assert_eq!(a.hunger, 100.0);
         assert_eq!(a.energy, 0.0);
+    }
+
+    #[test]
+    fn new_pet_starts_awake() {
+        assert_eq!(Pet::new("Migo").mode, PetMode::Awake);
+    }
+
+    #[test]
+    fn toggle_sleep_alternates() {
+        let mut p = Pet::new("Migo");
+        p.toggle_sleep();
+        assert_eq!(p.mode, PetMode::Asleep);
+        p.toggle_sleep();
+        assert_eq!(p.mode, PetMode::Awake);
     }
 }

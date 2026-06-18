@@ -18,7 +18,7 @@ mod tests {
     use crate::domain::{Attributes, Pet};
 
     fn pet_at(hunger: f64, energy: f64) -> Pet {
-        Pet { name: "Migo".into(), attributes: Attributes { hunger, energy } }
+        Pet { name: "Migo".into(), attributes: Attributes { hunger, energy }, mode: crate::domain::PetMode::Awake }
     }
 
     #[test]
