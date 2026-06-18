@@ -44,7 +44,7 @@ Os 10 entregáveis do MVP (ver `Minimigo SDD.md`) distribuídos em fatias:
 | 7 | Persistência SQLite | ✅ Fatia 1 |
 | 4 | Atributos básicos | 🟡 Fatia 1 (fome, energia) → resto em fatia futura |
 | 2 | Pet animado (8 animações) | 🟡 Fatia 1 (placeholder, 2 anims) → arte real depois |
-| 5 | Ações (alimentar, brincar, limpar, carinho, dormir, medicar) | 🔵 Fatia 2 (alimentar, dormir) → resto depois |
+| 5 | Ações (alimentar, brincar, limpar, carinho, dormir, medicar) | 🟡 Fatia 2 (alimentar, dormir) ✅ → resto depois |
 | 3 | System tray + ações rápidas | ⬜ futura |
 | 8 | Onboarding (nome/escolha do pet) | ⬜ futura |
 | 9 | Configurações (escala, posição, FPS, modo discreto) | ⬜ futura |
@@ -63,14 +63,19 @@ Legenda: ✅ concluído · 🟡 parcial · 🔵 em design · ⬜ não iniciado
   simulação online (tick 5s) + offline (teto 8h); persistência SQLite; comando
   `get_pet_state` + evento `pet-updated`. Testes: 9 Rust + 6 Vitest + 1 Playwright.
 
-### Fatia 2 — Ações de cuidado 🔵 EM DESIGN (pausada)
-- **Spec parcial:** `docs/superpowers/specs/2026-06-16-minimigo-vertical-slice-2-care-actions-design.md`
-- **Objetivo:** tornar o app interativo — alimentar e dormir, fechando o loop central
-  (pet sente fome/cansaço → usuário age).
-- **Status:** brainstorming pausado após a Seção 1 (domínio/simulação) ser aprovada.
-  Falta desenhar Seção 2 (comandos Tauri + fluxo) e Seção 3 (UI da barra no hover +
-  animações + testes), revisar o spec e escrever o plano. Ver o spec parcial para
-  decisões já tomadas e como retomar.
+### Fatia 2 — Ações de cuidado ✅ CONCLUÍDA
+- **Spec:** `docs/superpowers/specs/2026-06-16-minimigo-vertical-slice-2-care-actions-design.md`
+- **Plano:** `docs/superpowers/plans/2026-06-18-minimigo-vertical-slice-2-care-actions.md`
+- **Aceite:** `docs/superpowers/ACCEPTANCE-slice-2.md`
+- **Entregue:** modo de sono (`PetMode` awake/asleep) com decay sensível ao modo (sono
+  recupera energia, fome desacelera); ação `feed()` com regra de saciedade
+  (`FEED_MIN_HUNGER`); comandos Tauri `feed_pet`/`toggle_sleep` que persistem e emitem
+  `pet-updated` (snapshot tirado sob o lock); `asleep` no DTO/`types.ts`; barra de
+  cuidado React no hover (🍖 / 💤·☀️, feed desabilita ao saciar/carregar);
+  `pickAnimation` por modo; compat retroativa de snapshots via `#[serde(default)]`.
+  Testes: 20 Rust + 5 Vitest + 2 Playwright.
+- **Follow-up sugerido:** teste de integração dos comandos (consistência persist/emit),
+  hoje coberto só por smoke manual.
 
 ### Fatias futuras (ordem sugerida, a confirmar)
 1. **System tray + ações rápidas** — lar natural para ações (alimentar, mostrar/esconder, sair).

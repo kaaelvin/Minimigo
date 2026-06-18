@@ -5,6 +5,7 @@ use rusqlite::Connection;
 use serde::Serialize;
 use std::sync::Mutex;
 use std::time::{SystemTime, UNIX_EPOCH};
+use tauri::Emitter;
 
 /// Estado compartilhado gerenciado pelo Tauri.
 pub struct AppState {
@@ -38,6 +39,7 @@ pub struct PetState {
     pub name: String,
     pub hunger: f64,
     pub energy: f64,
+    pub asleep: bool,
 }
 
 impl From<&Pet> for PetState {
@@ -46,6 +48,7 @@ impl From<&Pet> for PetState {
             name: p.name.clone(),
             hunger: p.attributes.hunger,
             energy: p.attributes.energy,
+            asleep: p.mode == crate::domain::PetMode::Asleep,
         }
     }
 }
@@ -54,6 +57,28 @@ impl From<&Pet> for PetState {
 pub fn get_pet_state(state: tauri::State<AppState>) -> PetState {
     let pet = state.pet.lock().unwrap();
     PetState::from(&*pet)
+}
+
+#[tauri::command]
+pub fn feed_pet(app: tauri::AppHandle, state: tauri::State<AppState>) {
+    let snapshot = {
+        let mut pet = state.pet.lock().unwrap();
+        pet.feed();
+        PetState::from(&*pet)
+    };
+    persist(&state, now_unix());
+    let _ = app.emit("pet-updated", snapshot);
+}
+
+#[tauri::command]
+pub fn toggle_sleep(app: tauri::AppHandle, state: tauri::State<AppState>) {
+    let snapshot = {
+        let mut pet = state.pet.lock().unwrap();
+        pet.toggle_sleep();
+        PetState::from(&*pet)
+    };
+    persist(&state, now_unix());
+    let _ = app.emit("pet-updated", snapshot);
 }
 
 /// Persiste o pet atual com o timestamp informado.
@@ -88,12 +113,21 @@ mod tests {
     }
 
     #[test]
+    fn pet_state_reflects_asleep() {
+        let mut p = Pet::new("Migo");
+        assert!(!PetState::from(&p).asleep);
+        p.toggle_sleep();
+        assert!(PetState::from(&p).asleep);
+    }
+
+    #[test]
     fn applies_offline_decay_on_load() {
         let conn = Connection::open_in_memory().unwrap();
         init_db(&conn).unwrap();
         let pet = Pet {
             name: "Migo".into(),
             attributes: Attributes { hunger: 0.0, energy: 100.0 },
+            mode: crate::domain::PetMode::Awake,
         };
         save_snapshot(&conn, &Snapshot { pet, last_seen_unix: 1_700_000_000 }).unwrap();
 

@@ -2,11 +2,9 @@ import { Application, Assets, AnimatedSprite, Texture, Sprite } from "pixi.js";
 import type { Spritesheet } from "pixi.js";
 import type { PetState } from "../types";
 
-export const SLEEP_ENERGY_THRESHOLD = 15;
-
-/** Função pura: escolhe a animação a partir do estado. Testável sem PixiJS. */
+/** Função pura: escolhe a animação a partir do modo. Testável sem PixiJS. */
 export function pickAnimation(pet: PetState): "idle" | "sleep" {
-  return pet.energy <= SLEEP_ENERGY_THRESHOLD ? "sleep" : "idle";
+  return pet.asleep ? "sleep" : "idle";
 }
 
 export class PetRenderer {
