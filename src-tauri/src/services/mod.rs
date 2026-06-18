@@ -61,23 +61,23 @@ pub fn get_pet_state(state: tauri::State<AppState>) -> PetState {
 
 #[tauri::command]
 pub fn feed_pet(app: tauri::AppHandle, state: tauri::State<AppState>) {
-    {
+    let snapshot = {
         let mut pet = state.pet.lock().unwrap();
         pet.feed();
-    }
+        PetState::from(&*pet)
+    };
     persist(&state, now_unix());
-    let snapshot = PetState::from(&*state.pet.lock().unwrap());
     let _ = app.emit("pet-updated", snapshot);
 }
 
 #[tauri::command]
 pub fn toggle_sleep(app: tauri::AppHandle, state: tauri::State<AppState>) {
-    {
+    let snapshot = {
         let mut pet = state.pet.lock().unwrap();
         pet.toggle_sleep();
-    }
+        PetState::from(&*pet)
+    };
     persist(&state, now_unix());
-    let snapshot = PetState::from(&*state.pet.lock().unwrap());
     let _ = app.emit("pet-updated", snapshot);
 }
 
