@@ -70,4 +70,33 @@ mod tests {
         init_db(&conn).unwrap();
         assert!(load_snapshot(&conn).unwrap().is_none());
     }
+
+    #[test]
+    fn round_trip_preserves_mode() {
+        let conn = Connection::open_in_memory().unwrap();
+        init_db(&conn).unwrap();
+
+        let mut pet = Pet::new("Migo");
+        pet.toggle_sleep(); // asleep
+        save_snapshot(&conn, &Snapshot { pet, last_seen_unix: 1 }).unwrap();
+
+        let loaded = load_snapshot(&conn).unwrap().expect("snapshot deve existir");
+        assert_eq!(loaded.pet.mode, crate::domain::PetMode::Asleep);
+    }
+
+    #[test]
+    fn legacy_snapshot_without_mode_defaults_awake() {
+        let conn = Connection::open_in_memory().unwrap();
+        init_db(&conn).unwrap();
+        // JSON no formato da Fatia 1, sem o campo `mode`.
+        let legacy = r#"{"name":"Migo","attributes":{"hunger":10.0,"energy":90.0}}"#;
+        conn.execute(
+            "INSERT INTO pet_snapshot (id, pet_json, last_seen_unix) VALUES (1, ?1, ?2)",
+            rusqlite::params![legacy, 1_700_000_000_i64],
+        )
+        .unwrap();
+
+        let loaded = load_snapshot(&conn).unwrap().expect("snapshot deve existir");
+        assert_eq!(loaded.pet.mode, crate::domain::PetMode::Awake);
+    }
 }
