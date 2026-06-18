@@ -13,6 +13,13 @@ export default function App() {
   const setPet = usePetStore((s) => s.setPet);
   const [hovering, setHovering] = useState(false);
 
+  const rendererRef = useRef<PetRenderer | undefined>(undefined);
+
+  const handleFeed = () => {
+    void invoke("feed_pet");
+    rendererRef.current?.playEat();
+  };
+
   useEffect(() => {
     let renderer: PetRenderer | undefined;
     let unlisten: (() => void) | undefined;
@@ -32,6 +39,7 @@ export default function App() {
     const teardown = () => {
       unlisten?.();
       unlisten = undefined;
+      rendererRef.current = undefined;
       if (initialized && !destroyed) {
         destroyed = true;
         app.destroy(true);
@@ -47,6 +55,7 @@ export default function App() {
       }
       containerRef.current?.appendChild(app.canvas);
       renderer = new PetRenderer(app);
+      rendererRef.current = renderer;
       await renderer.load();
 
       // estado inicial vindo do Rust
@@ -86,7 +95,7 @@ export default function App() {
       onMouseLeave={() => setHovering(false)}
     >
       <div ref={containerRef} />
-      <CareBar visible={hovering} />
+      <CareBar visible={hovering} onFeed={handleFeed} />
     </div>
   );
 }
