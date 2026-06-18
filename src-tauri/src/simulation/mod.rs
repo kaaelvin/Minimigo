@@ -4,12 +4,12 @@ use crate::domain::Pet;
 pub const MAX_OFFLINE_MINUTES: f64 = 8.0 * 60.0;
 
 pub fn tick(pet: &mut Pet, elapsed_minutes: f64) {
-    pet.attributes.apply_decay(elapsed_minutes);
+    pet.apply_decay(elapsed_minutes);
 }
 
 pub fn apply_offline(pet: &mut Pet, elapsed_minutes: f64) {
     let capped = elapsed_minutes.min(MAX_OFFLINE_MINUTES);
-    pet.attributes.apply_decay(capped);
+    pet.apply_decay(capped);
 }
 
 #[cfg(test)]
@@ -45,5 +45,13 @@ mod tests {
         apply_offline(&mut p, 60.0); // 1h, abaixo do teto
         assert_eq!(p.attributes.hunger, 30.0); // 0.5*60
         assert_eq!(p.attributes.energy, 82.0); // 100 - 0.3*60
+    }
+
+    #[test]
+    fn offline_asleep_recovers_energy_capped() {
+        let mut p = Pet { name: "Migo".into(), attributes: Attributes { hunger: 0.0, energy: 0.0 }, mode: crate::domain::PetMode::Asleep };
+        apply_offline(&mut p, 100_000.0); // muito tempo -> limitado a 480 min
+        assert_eq!(p.attributes.energy, 100.0); // 0 + 1.0*480 = 480 -> clamp 100
+        assert_eq!(p.attributes.hunger, 96.0);  // 0 + 0.2*480
     }
 }
