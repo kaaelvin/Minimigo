@@ -88,7 +88,8 @@ mod tests {
     fn legacy_snapshot_without_mode_defaults_awake() {
         let conn = Connection::open_in_memory().unwrap();
         init_db(&conn).unwrap();
-        // JSON no formato da Fatia 1, sem o campo `mode`.
+        // JSON congelado no formato da Fatia 1 (sem o campo `mode`) — NÃO atualizar para
+        // o schema atual, senão a cobertura de compatibilidade retroativa é perdida.
         let legacy = r#"{"name":"Migo","attributes":{"hunger":10.0,"energy":90.0}}"#;
         conn.execute(
             "INSERT INTO pet_snapshot (id, pet_json, last_seen_unix) VALUES (1, ?1, ?2)",
