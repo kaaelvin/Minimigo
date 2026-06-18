@@ -1,15 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Application } from "pixi.js";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { usePetStore } from "./state/petStore";
 import { PetRenderer } from "./pixi/PetRenderer";
+import { CareBar } from "./components/CareBar";
 import type { PetState } from "./types";
 import "./App.css";
 
 export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const setPet = usePetStore((s) => s.setPet);
+  const [hovering, setHovering] = useState(false);
 
   useEffect(() => {
     let renderer: PetRenderer | undefined;
@@ -77,5 +79,14 @@ export default function App() {
     };
   }, [setPet]);
 
-  return <div ref={containerRef} />;
+  return (
+    <div
+      className="pet-root"
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+    >
+      <div ref={containerRef} />
+      <CareBar visible={hovering} />
+    </div>
+  );
 }
