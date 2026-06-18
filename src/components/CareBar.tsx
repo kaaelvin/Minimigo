@@ -7,7 +7,7 @@ export const FEED_MIN_HUNGER = 10;
 /** Barra de ações sobre o pet. `visible` controla a aparição no hover. */
 export function CareBar({ visible }: { visible: boolean }) {
   const pet = usePetStore((s) => s.pet);
-  const feedDisabled = pet !== null && pet.hunger < FEED_MIN_HUNGER;
+  const feedDisabled = pet === null || pet.hunger < FEED_MIN_HUNGER;
   const asleep = pet?.asleep ?? false;
 
   return (
@@ -16,6 +16,7 @@ export function CareBar({ visible }: { visible: boolean }) {
         type="button"
         data-testid="feed-btn"
         title="Alimentar"
+        aria-label="Alimentar"
         disabled={feedDisabled}
         onClick={() => {
           void invoke("feed_pet");
@@ -27,6 +28,7 @@ export function CareBar({ visible }: { visible: boolean }) {
         type="button"
         data-testid="sleep-btn"
         title={asleep ? "Acordar" : "Dormir"}
+        aria-label={asleep ? "Acordar" : "Dormir"}
         onClick={() => {
           void invoke("toggle_sleep");
         }}
