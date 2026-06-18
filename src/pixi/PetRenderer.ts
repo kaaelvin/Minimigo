@@ -77,7 +77,11 @@ export class PetRenderer {
     this.setAnimation("eat");
   }
 
-  /** Atualiza a animação conforme o estado; trava durante o comer. */
+  /**
+   * Atualiza a animação conforme o estado. Durante o comer, `setAnimation("eat")`
+   * é no-op (guard `current === name`), então mudanças de estado no meio são
+   * deliberadamente colapsadas: ao terminar, reverte para o último `lastPet` visto.
+   */
   render(pet: PetState) {
     this.lastPet = pet;
     this.setAnimation(chooseAnimation(pet, this.eating));
