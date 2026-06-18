@@ -43,6 +43,7 @@ impl Pet {
         }
     }
 
+    /// Alterna o modo entre `Awake` e `Asleep`.
     pub fn toggle_sleep(&mut self) {
         self.mode = match self.mode {
             PetMode::Awake => PetMode::Asleep,
