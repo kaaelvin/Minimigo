@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Application } from "pixi.js";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
@@ -15,10 +15,10 @@ export default function App() {
 
   const rendererRef = useRef<PetRenderer | undefined>(undefined);
 
-  const handleFeed = () => {
+  const handleFeed = useCallback(() => {
     void invoke("feed_pet");
     rendererRef.current?.playEat();
-  };
+  }, []);
 
   useEffect(() => {
     let renderer: PetRenderer | undefined;
