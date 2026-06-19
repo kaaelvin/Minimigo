@@ -1,0 +1,128 @@
+{
+  "frames": {
+    "aqua_idle_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 322,
+        "h": 165
+      }
+    },
+    "aqua_idle_1": {
+      "frame": {
+        "x": 322,
+        "y": 0,
+        "w": 322,
+        "h": 165
+      }
+    },
+    "aqua_idle_2": {
+      "frame": {
+        "x": 644,
+        "y": 0,
+        "w": 322,
+        "h": 165
+      }
+    },
+    "aqua_idle_3": {
+      "frame": {
+        "x": 966,
+        "y": 0,
+        "w": 322,
+        "h": 165
+      }
+    },
+    "aqua_sleep_0": {
+      "frame": {
+        "x": 0,
+        "y": 165,
+        "w": 322,
+        "h": 165
+      }
+    },
+    "aqua_sleep_1": {
+      "frame": {
+        "x": 322,
+        "y": 165,
+        "w": 322,
+        "h": 165
+      }
+    },
+    "aqua_sleep_2": {
+      "frame": {
+        "x": 644,
+        "y": 165,
+        "w": 322,
+        "h": 165
+      }
+    },
+    "aqua_sleep_3": {
+      "frame": {
+        "x": 966,
+        "y": 165,
+        "w": 322,
+        "h": 165
+      }
+    },
+    "aqua_eat_0": {
+      "frame": {
+        "x": 0,
+        "y": 330,
+        "w": 322,
+        "h": 165
+      }
+    },
+    "aqua_eat_1": {
+      "frame": {
+        "x": 322,
+        "y": 330,
+        "w": 322,
+        "h": 165
+      }
+    },
+    "aqua_eat_2": {
+      "frame": {
+        "x": 644,
+        "y": 330,
+        "w": 322,
+        "h": 165
+      }
+    },
+    "aqua_eat_3": {
+      "frame": {
+        "x": 966,
+        "y": 330,
+        "w": 322,
+        "h": 165
+      }
+    }
+  },
+  "meta": {
+    "image": "aqua.png",
+    "size": {
+      "w": 1288,
+      "h": 495
+    },
+    "scale": "1"
+  },
+  "animations": {
+    "idle": [
+      "aqua_idle_0",
+      "aqua_idle_1",
+      "aqua_idle_2",
+      "aqua_idle_3"
+    ],
+    "sleep": [
+      "aqua_sleep_0",
+      "aqua_sleep_1",
+      "aqua_sleep_2",
+      "aqua_sleep_3"
+    ],
+    "eat": [
+      "aqua_eat_0",
+      "aqua_eat_1",
+      "aqua_eat_2",
+      "aqua_eat_3"
+    ]
+  }
+}
